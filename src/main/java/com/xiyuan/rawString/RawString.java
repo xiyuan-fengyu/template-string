@@ -24,7 +24,15 @@ public class RawString {
 
         public static String $() {
             StackTraceElement element = new Throwable().getStackTrace()[1];
-            String key = element.getClassName() + "_" + element.getLineNumber();
+            String key = element.getClassName();
+            int lastDotI = key.lastIndexOf('.');
+            if (lastDotI > -1)  {
+                key = key.substring(0, lastDotI + 1) + element.getFileName();
+            }
+            else {
+                key = element.getFileName();
+            }
+            key +=  "_" + element.getLineNumber();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
                             RawString.class.getClassLoader().getResourceAsStream("raw-string/" + key), StandardCharsets.UTF_8))) {

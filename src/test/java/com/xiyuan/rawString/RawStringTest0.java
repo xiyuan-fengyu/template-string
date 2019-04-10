@@ -13,7 +13,7 @@ public class RawStringTest0 {
         console.log("/*123中文*\/");
         console.log(${arg0});
         console.log(${arg1});
-        console.log(${arg2 ? "ok", "false"});
+        console.log(${arg2 ? "ok" : "false"});
 
         */);
         System.out.println(rawStr);
