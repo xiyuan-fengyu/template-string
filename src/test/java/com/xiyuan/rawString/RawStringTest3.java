@@ -15,7 +15,7 @@ class RawString$Test3 {
             public static void main(String[] args) {
                 String rawStr = $(/*
                 第1行
-                第2行
+                第2行${_0}
                 第3行*\/
                 */);
                 System.out.println(rawStr);

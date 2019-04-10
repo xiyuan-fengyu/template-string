@@ -89,10 +89,10 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
                                     List<String> newRawLines = rawLines.stream()
                                             .map(item -> item.isEmpty() ? item : item.substring(Math.min(prefix.length(), item.length())))
                                             .collect(Collectors.toList());
-                                    generateRawLinesResource(rawLinesKey, newRawLines);
+                                    generateRawLinesResource(rawLinesKey, newRawLines, javaExpMagic);
                                 }
                                 else {
-                                    generateRawLinesResource(rawLinesKey, rawLines);
+                                    generateRawLinesResource(rawLinesKey, rawLines, javaExpMagic);
                                 }
 
                                 rawLines.clear();
@@ -246,6 +246,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
             throw new RuntimeException("bad java exp(" + lineParseRes.pos + "): " + badJavaExp);
         }
 
+        lineParseRes.parsedLine = line;
         return lineParseRes;
     }
 
@@ -273,13 +274,13 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void generateRawLinesResource(String key, List<String> rawLines) {
+    private void generateRawLinesResource(String key, List<String> rawLines, long javaExpMagic) {
         try {
             FileObject fileObject = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,
                     "", "raw-string/"  + key);
             try (Writer writer = new OutputStreamWriter(fileObject.openOutputStream(), StandardCharsets.UTF_8)) {
                 String rawLinesStr = String.join("\n", rawLines);
-                writer.append(String.valueOf(rawLinesStr.length())).append("\n")
+                writer.append(rawLinesStr.length() + " " + javaExpMagic).append("\n")
                         .append(rawLinesStr);
             }
         }
