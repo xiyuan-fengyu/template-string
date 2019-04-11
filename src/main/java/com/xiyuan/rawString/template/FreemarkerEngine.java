@@ -2,39 +2,33 @@ package com.xiyuan.rawString.template;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.TemplateException;
 
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created by xiyuan_fengyu on 2019/4/11 13:47.
  */
-public class FreemarkerEngine extends TemplateEngine<Configuration> {
+public class FreemarkerEngine extends TemplateEngine {
 
     private final Configuration configuration;
 
-    public FreemarkerEngine(Configuration config) {
-        super(config);
+    public FreemarkerEngine(Properties properties) {
+        super(properties);
 
-        if (config == null) {
-            configuration = new Configuration(Configuration.VERSION_2_3_28);
-            configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-            configuration.setLogTemplateExceptions(false);
-            configuration.setWrapUncheckedExceptions(true);
-            try (InputStream in = FreemarkerEngine.class.getClassLoader().getResourceAsStream("raw-string/freemarker.properties")) {
-                if (in != null) {
-                    configuration.setSettings(in);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (properties == null) {
+            properties = tryLoadProperties("freemarker");
         }
-        else {
-            configuration = config;
+
+        configuration = new Configuration(Configuration.VERSION_2_3_28);
+        try {
+            configuration.setSettings(properties);
+        } catch (TemplateException e) {
+            e.printStackTrace();
         }
+
         // 模板都是以UTF-8保存的
         configuration.setDefaultEncoding("UTF-8");
         configuration.setClassLoaderForTemplateLoading(FreemarkerEngine.class.getClassLoader(), "raw-string");

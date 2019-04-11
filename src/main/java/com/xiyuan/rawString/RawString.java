@@ -1,7 +1,6 @@
 package com.xiyuan.rawString;
 
 import com.xiyuan.rawString.template.TemplateEngine;
-import com.xiyuan.rawString.template.TemplateEngineFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class RawString {
         key +=  "_" + traceElement.getLineNumber();
 
         if (templateEngine == null) {
-            templateEngine = TemplateEngineFactory.get();
+            templateEngine = TemplateEngine.get();
         }
         if (context == null) {
             context = new HashMap<>();
