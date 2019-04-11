@@ -42,6 +42,10 @@ public abstract class TemplateEngine {
             {
                     "org.apache.velocity.Template",
                     "com.xiyuan.rawString.template.VelocityEngine"
+            },
+            {
+                    "org.thymeleaf.TemplateEngine",
+                    "com.xiyuan.rawString.template.ThymeleafEngine"
             }
     };
 
@@ -70,6 +74,14 @@ public abstract class TemplateEngine {
                 "    <groupId>org.apache.velocity</groupId>\n" +
                 "    <artifactId>velocity-engine-core</artifactId>\n" +
                 "    <version>2.1</version>\n" +
+                "</dependency>\n" +
+                "\n" +
+                "thymeleaf:\n" +
+                "<dependency>\n" +
+                "    <groupId>org.thymeleaf</groupId>\n" +
+                "    <artifactId>thymeleaf</artifactId>\n" +
+                "    <version>3.0.11.RELEASE</version>\n" +
+                "    <scope>provided</scope>\n" +
                 "</dependency>\n");
     }
 

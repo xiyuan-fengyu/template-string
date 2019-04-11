@@ -40,6 +40,8 @@ public class RawString {
 
     public static final class S {
 
+        private S() {}
+
         public static String $() {
             return RawString.$(null, null, new Throwable().getStackTrace()[1]);
         }

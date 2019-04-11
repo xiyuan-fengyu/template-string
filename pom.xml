@@ -31,6 +31,13 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.11.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -43,6 +50,7 @@
                     <target>${java.version}</target>
                     <compilerArgument>-proc:none</compilerArgument>
                     <compilerArguments>
+                        <!--suppress UnresolvedMavenProperty -->
                         <bootclasspath>${JAVA_HOME}/jre/lib/rt.jar;${JAVA_HOME}/lib/tools.jar</bootclasspath>
                     </compilerArguments>
                 </configuration>
