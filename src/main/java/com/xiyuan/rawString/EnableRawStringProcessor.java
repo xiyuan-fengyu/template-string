@@ -2,7 +2,6 @@ package com.xiyuan.rawString;
 
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.code.SymbolMetadata;
 import com.sun.tools.javac.util.Pair;
 
 import javax.annotation.processing.*;

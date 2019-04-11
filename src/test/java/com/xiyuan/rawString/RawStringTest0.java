@@ -12,7 +12,7 @@ public class RawStringTest0 {
         const str = 123;
         console.log("/*123中文*\/");
         console.log(${_0} + "${_1}");
-        console.log(${_2?string("true", "false")});
+        console.log(${_2 ? string("true", "false")});
 
         */);
         System.out.println(rawStr);
