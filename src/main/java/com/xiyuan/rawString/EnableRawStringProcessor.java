@@ -1,14 +1,16 @@
 package com.xiyuan.rawString;
 
+import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.file.BaseFileObject;
-import com.sun.tools.javac.parser.JavacParser;
+import com.sun.tools.javac.code.SymbolMetadata;
+import com.sun.tools.javac.util.Pair;
 
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
+import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -17,7 +19,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,20 +50,32 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
             for (Element ele : roundEnv.getElementsAnnotatedWith(EnableRawString.class)) {
                 if (ele instanceof Symbol.ClassSymbol) {
                     Symbol.ClassSymbol classSymbol = (Symbol.ClassSymbol) ele;
-                    BaseFileObject sourcefile = (BaseFileObject) classSymbol.sourcefile;
+
+                    Pair<Symbol.MethodSymbol, Attribute> attributePair = classSymbol.getMetadata().getDeclarationAttributes().get(0).values.head;
+                    String charset = attributePair == null ? "UTF-8" : (String) attributePair.snd.getValue();
+
+                    JavaFileObject sourcefile = classSymbol.sourcefile;
                     String classOwnerName = classSymbol.flatname.toString();
                     int lastDotI = classOwnerName.lastIndexOf('.');
+                    String sourceFileName = sourcefile.getName();
+                    int lastPathDivider = sourceFileName.lastIndexOf('/');
+                    if (lastPathDivider == -1) {
+                        lastPathDivider = sourceFileName.lastIndexOf('\\');
+                    }
+                    if (lastPathDivider > -1) {
+                        sourceFileName = sourceFileName.substring(lastPathDivider + 1);
+                    }
+
                     if (lastDotI > -1) {
-                        classOwnerName = classOwnerName.substring(0, lastDotI + 1) + sourcefile.getShortName();
+                        classOwnerName = classOwnerName.substring(0, lastDotI + 1) + sourceFileName;
                     }
                     else {
-                        classOwnerName = sourcefile.getShortName();
+                        classOwnerName = sourceFileName;
                     }
 
-                    long javaExpMagic = (System.currentTimeMillis() << 22) + new Random().nextInt(1 << 22);
-
                     String filePath  = sourcefile.getName().replaceAll("\\\\", "/");
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(classSymbol.sourcefile.openInputStream(), StandardCharsets.UTF_8))) {
+
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(classSymbol.sourcefile.openInputStream(), charset))) {
                         int lineI = 1;
 
                         String line;
@@ -89,10 +102,10 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
                                     List<String> newRawLines = rawLines.stream()
                                             .map(item -> item.isEmpty() ? item : item.substring(Math.min(prefix.length(), item.length())))
                                             .collect(Collectors.toList());
-                                    generateRawLinesResource(rawLinesKey, newRawLines, javaExpMagic);
+                                    generateRawLinesResource(rawLinesKey, newRawLines);
                                 }
                                 else {
-                                    generateRawLinesResource(rawLinesKey, rawLines, javaExpMagic);
+                                    generateRawLinesResource(rawLinesKey, rawLines);
                                 }
 
                                 rawLines.clear();
@@ -109,9 +122,8 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
 
                             if (!isStartEndLine) {
                                 if (rawLinesKey != null) {
-                                    LineParseRes lineParseRes = parseLine(line, filePath, lineI, javaExpMagic);
-                                    // todo
-                                    rawLines.add(lineParseRes.parsedLine);
+                                    line = parseLine(line, filePath + ":" + lineI);
+                                    rawLines.add(line);
                                 }
                             }
 
@@ -127,8 +139,8 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
         return true;
     }
 
-    private LineParseRes parseLine(String line, String filePath, int lineNum, long javaExpMagic) {
-        LineParseRes lineParseRes = new LineParseRes(line, filePath, lineNum);
+    private String parseLine(String line, String pos) {
+        String orignalLine = line;
 
         // 将 *\/ 这种替换为 */
         // 将 *\\\\\/ 这种替换为 *\\\\/
@@ -160,7 +172,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
             }
             else if (c == '/') {
                 if (status == 1) {
-                    throw new RuntimeException("bar raw line(" + lineParseRes.pos + "): " + lineParseRes.orignalLine);
+                    throw new RuntimeException("bar raw line(" + pos + "): " + orignalLine);
                 }
                 else if (status == 2) {
                     line = line.substring(0, starI + 1) + line.substring(starI + 2);
@@ -178,76 +190,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
             }
         }
 
-        // 开始解析 ${javaExp}
-        // $的位置
-        int $I = -1;
-        /*
-        0:默认状态
-        3:读取到$
-        4:$后紧跟着{
-         */
-        status = 0;
-        cursor = 0;
-        String badJavaExp = null;
-        while (cursor < line.length()) {
-            char c = line.charAt(cursor);
-            if (c == '}') {
-                if (status == 4) {
-                    if ($I + 2 == cursor) {
-                        // 当做空字符串处理
-                        line = line.substring(0, $I) + line.substring($I + 3);
-                    }
-                    else {
-                        // 尝试将${}之间的字符串当做java exp解析
-                        String exp = line.substring($I + 2, cursor);
-                        if (JavaExpChecker.isValid(exp)) {
-                            badJavaExp = null;
-                            //  解析到 正确的java exp
-                            status = 0;
-
-                            // 替换字符串为 $javaExpMagic_lineNum_$I$
-                            String javaExpMethod = "$" + javaExpMagic + "_" + lineNum + "_" + $I + "$";
-                            lineParseRes.javaExps.add(new String[]{
-                                    javaExpMethod,
-                                    exp
-                            });
-                            line = line.substring(0, $I) + javaExpMethod + line.substring(cursor + 1);
-                            cursor = javaExpMethod.length() - exp.length() - 2;
-                        }
-                        else {
-                            badJavaExp = exp;
-                        }
-                    }
-                    cursor++;
-                }
-                else {
-                    cursor++;
-                }
-            }
-            else if (c == '$')  {
-                if (status != 4) {
-                    status = 3;
-                    $I = cursor;
-                }
-                cursor++;
-            }
-            else if (c == '{') {
-                if (status == 3) {
-                    status = 4;
-                }
-                cursor++;
-            }
-            else {
-                cursor++;
-            }
-        }
-
-        if (badJavaExp != null) {
-            throw new RuntimeException("bad java exp(" + lineParseRes.pos + "): " + badJavaExp);
-        }
-
-        lineParseRes.parsedLine = line;
-        return lineParseRes;
+        return line;
     }
 
     private static String blankPrefix(String str) {
@@ -274,36 +217,18 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void generateRawLinesResource(String key, List<String> rawLines, long javaExpMagic) {
+    private void generateRawLinesResource(String key, List<String> rawLines) {
         try {
             FileObject fileObject = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,
                     "", "raw-string/"  + key);
             try (Writer writer = new OutputStreamWriter(fileObject.openOutputStream(), StandardCharsets.UTF_8)) {
                 String rawLinesStr = String.join("\n", rawLines);
-                writer.append(rawLinesStr.length() + " " + javaExpMagic).append("\n")
-                        .append(rawLinesStr);
+                writer.append(rawLinesStr);
             }
         }
         catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static final class LineParseRes  {
-
-        public String orignalLine;
-
-        public String parsedLine;
-
-        public String pos;
-
-        public List<String[]> javaExps = new ArrayList<>();
-
-        public LineParseRes(String orignalLine, String filePath, int lineNum) {
-            this.orignalLine = orignalLine;
-            this.pos = filePath + ":" + lineNum;
-        }
-
     }
 
 }

@@ -10,4 +10,6 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 public @interface EnableRawString {
 
+    String charset() default "UTF-8";
+
 }

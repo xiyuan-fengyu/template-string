@@ -13,6 +13,7 @@ class RawString$Test3 {
         public static class Temp {
 
             public static void main(String[] args) {
+                // _0 参数未提供，报错
                 String rawStr = $(/*
                 第1行
                 第2行${_0}

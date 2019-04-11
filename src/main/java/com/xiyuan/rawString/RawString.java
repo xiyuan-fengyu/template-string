@@ -1,52 +1,74 @@
 package com.xiyuan.rawString;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import com.xiyuan.rawString.template.TemplateEngine;
+import com.xiyuan.rawString.template.TemplateEngineFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by xiyuan_fengyu on 2019/4/9 16:02.
  */
+@SuppressWarnings("WeakerAccess")
 public class RawString {
 
-    private Object[] args;
+    private final Map<String, Object> context = new ConcurrentHashMap<>();
+
+    private TemplateEngine templateEngine;
 
     public RawString(Object ...args) {
-        this.args = args;
+        if (args != null) {
+            for (int i = 0, len = args.length; i < len; i++) {
+                context.put("_" + i, args[i]);
+            }
+        }
+    }
+
+    public RawString put(String key, Object value) {
+        context.put(key, value);
+        return this;
+    }
+
+    public RawString setTemplateEngine(TemplateEngine templateEngine) {
+        this.templateEngine = templateEngine;
+        return this;
     }
 
     public String $() {
-
-        return null;
+        return $(templateEngine, context, new Throwable().getStackTrace()[1]);
     }
 
     public static final class S {
 
         public static String $() {
-            StackTraceElement element = new Throwable().getStackTrace()[1];
-            String key = element.getClassName();
-            int lastDotI = key.lastIndexOf('.');
-            if (lastDotI > -1)  {
-                key = key.substring(0, lastDotI + 1) + element.getFileName();
-            }
-            else {
-                key = element.getFileName();
-            }
-            key +=  "_" + element.getLineNumber();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            RawString.class.getClassLoader().getResourceAsStream("raw-string/" + key), StandardCharsets.UTF_8))) {
-                String lengthLine = reader.readLine();
-                int length = Integer.parseInt(lengthLine);
-                char[] chars = new char[length];
-                reader.read(chars);
-                return new String(chars);
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            return RawString.$(null, null, new Throwable().getStackTrace()[1]);
         }
 
+    }
+
+    private static String $(TemplateEngine templateEngine, Map<String, Object> context, StackTraceElement traceElement) {
+        String key = traceElement.getClassName();
+        int lastDotI = key.lastIndexOf('.');
+        if (lastDotI > -1)  {
+            key = key.substring(0, lastDotI + 1) + traceElement.getFileName();
+        }
+        else {
+            key = traceElement.getFileName();
+        }
+        key +=  "_" + traceElement.getLineNumber();
+
+        if (templateEngine == null) {
+            templateEngine = TemplateEngineFactory.get();
+        }
+        if (context == null) {
+            context = new HashMap<>();
+        }
+        try {
+            return templateEngine.parse(key, context);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

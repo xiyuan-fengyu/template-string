@@ -13,9 +13,9 @@ public class ProcessorDebuger {
                 "target/test-classes",
                 "-processor",
                 "com.xiyuan.rawString.EnableRawStringProcessor",
-//                "src/test/java/com/xiyuan/rawString/RawStringTest0.java",
-//                "src/test/java/com/xiyuan/rawString/RawStringTest1.java",
-//                "src/test/java/com/xiyuan/rawString/RawStringTest2.java",
+                "src/test/java/com/xiyuan/rawString/RawStringTest0.java",
+                "src/test/java/com/xiyuan/rawString/RawStringTest1.java",
+                "src/test/java/com/xiyuan/rawString/RawStringTest2.java",
                 "src/test/java/com/xiyuan/rawString/RawStringTest3.java"
         });
     }
