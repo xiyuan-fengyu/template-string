@@ -29,6 +29,11 @@ public class RawString {
         return this;
     }
 
+    public RawString putAll(Map<String, Object> params) {
+        context.putAll(params);
+        return this;
+    }
+
     public RawString setTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
         return this;
