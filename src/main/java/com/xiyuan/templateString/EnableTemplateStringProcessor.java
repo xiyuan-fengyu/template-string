@@ -1,4 +1,4 @@
-package com.xiyuan.rawString;
+package com.xiyuan.templateString;
 
 import com.sun.tools.javac.code.Attribute;
 import com.sun.tools.javac.code.Symbol;
@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 /**
  * Created by xiyuan_fengyu on 2019/4/9 16:23.
  */
-@SupportedAnnotationTypes("com.xiyuan.rawString.EnableRawString")
-public final class EnableRawStringProcessor extends AbstractProcessor {
+@SupportedAnnotationTypes("com.xiyuan.templateString.EnableTemplateString")
+public final class EnableTemplateStringProcessor extends AbstractProcessor {
 
     private Messager messager;
 
@@ -46,7 +46,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
     @Override
     public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
         if (annotations.size() > 0) {
-            for (Element ele : roundEnv.getElementsAnnotatedWith(EnableRawString.class)) {
+            for (Element ele : roundEnv.getElementsAnnotatedWith(EnableTemplateString.class)) {
                 if (ele instanceof Symbol.ClassSymbol) {
                     Symbol.ClassSymbol classSymbol = (Symbol.ClassSymbol) ele;
 
@@ -171,7 +171,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
             }
             else if (c == '/') {
                 if (status == 1) {
-                    throw new RuntimeException("bar raw line(" + pos + "): " + orignalLine);
+                    throw new RuntimeException("bad raw line(" + pos + "): " + orignalLine);
                 }
                 else if (status == 2) {
                     line = line.substring(0, starI + 1) + line.substring(starI + 2);
@@ -219,7 +219,7 @@ public final class EnableRawStringProcessor extends AbstractProcessor {
     private void generateRawLinesResource(String key, List<String> rawLines) {
         try {
             FileObject fileObject = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT,
-                    "", "raw-string/"  + key);
+                    "", TemplateString.resourcePath + "/"  + key);
             try (Writer writer = new OutputStreamWriter(fileObject.openOutputStream(), StandardCharsets.UTF_8)) {
                 String rawLinesStr = String.join("\n", rawLines);
                 writer.append(rawLinesStr);

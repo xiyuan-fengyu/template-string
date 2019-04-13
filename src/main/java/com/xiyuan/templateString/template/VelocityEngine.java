@@ -1,5 +1,6 @@
-package com.xiyuan.rawString.template;
+package com.xiyuan.templateString.template;
 
+import com.xiyuan.templateString.TemplateString;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.RuntimeConstants;
@@ -37,7 +38,7 @@ public class VelocityEngine extends TemplateEngine {
     @Override
     public String parse(String templateName, Map<String, Object> context) throws Exception {
         Template template = templateCache.computeIfAbsent(templateName,
-                key -> velocityEngine.getTemplate("raw-string/" + key));
+                key -> velocityEngine.getTemplate(TemplateString.resourcePath + "/" + key));
         VelocityContext velocityContext = new VelocityContext(context);
         StringWriter writer = new StringWriter();
         template.merge(velocityContext, writer);

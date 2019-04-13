@@ -1,6 +1,6 @@
-package com.xiyuan.rawString;
+package com.xiyuan.templateString;
 
-import com.xiyuan.rawString.template.TemplateEngine;
+import com.xiyuan.templateString.template.TemplateEngine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +10,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by xiyuan_fengyu on 2019/4/9 16:02.
  */
 @SuppressWarnings("WeakerAccess")
-public class RawString {
+public class TemplateString {
+
+    public static final String resourcePath = "template-string";
 
     private final Map<String, Object> context = new ConcurrentHashMap<>();
 
     private TemplateEngine templateEngine;
 
-    public RawString(Object ...args) {
+    public TemplateString(Object ...args) {
         if (args != null) {
             for (int i = 0, len = args.length; i < len; i++) {
                 context.put("_" + i, args[i]);
@@ -24,17 +26,17 @@ public class RawString {
         }
     }
 
-    public RawString put(String key, Object value) {
+    public TemplateString put(String key, Object value) {
         context.put(key, value);
         return this;
     }
 
-    public RawString putAll(Map<String, Object> params) {
+    public TemplateString putAll(Map<String, Object> params) {
         context.putAll(params);
         return this;
     }
 
-    public RawString setTemplateEngine(TemplateEngine templateEngine) {
+    public TemplateString setTemplateEngine(TemplateEngine templateEngine) {
         this.templateEngine = templateEngine;
         return this;
     }
@@ -48,7 +50,7 @@ public class RawString {
         private S() {}
 
         public static String $() {
-            return RawString.$(null, null, new Throwable().getStackTrace()[1]);
+            return TemplateString.$(null, null, new Throwable().getStackTrace()[1]);
         }
 
     }

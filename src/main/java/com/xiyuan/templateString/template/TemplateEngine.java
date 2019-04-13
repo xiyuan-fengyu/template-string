@@ -1,4 +1,6 @@
-package com.xiyuan.rawString.template;
+package com.xiyuan.templateString.template;
+
+import com.xiyuan.templateString.TemplateString;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -17,7 +19,7 @@ public abstract class TemplateEngine {
 
     protected Properties tryLoadProperties(String type) {
         Properties properties = new Properties();
-        try (InputStream in = FreemarkerEngine.class.getClassLoader().getResourceAsStream("raw-string/" + type + ".properties")) {
+        try (InputStream in = FreemarkerEngine.class.getClassLoader().getResourceAsStream(TemplateString.resourcePath + "/" + type + ".properties")) {
             if (in != null) {
                 properties.load(in);
             }
@@ -37,15 +39,15 @@ public abstract class TemplateEngine {
     private static final String[][] engines = {
             {
                     "freemarker.template.Template",
-                    "com.xiyuan.rawString.template.FreemarkerEngine"
+                    "com.xiyuan.templateString.template.FreemarkerEngine"
             },
             {
                     "org.apache.velocity.Template",
-                    "com.xiyuan.rawString.template.VelocityEngine"
+                    "com.xiyuan.templateString.template.VelocityEngine"
             },
             {
                     "org.thymeleaf.TemplateEngine",
-                    "com.xiyuan.rawString.template.ThymeleafEngine"
+                    "com.xiyuan.templateString.template.ThymeleafEngine"
             }
     };
 

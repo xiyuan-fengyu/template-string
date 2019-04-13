@@ -1,4 +1,4 @@
-package com.xiyuan.rawString;
+package com.xiyuan.templateString;
 
 /**
  * Created by xiyuan_fengyu on 2019/4/9 17:12.
@@ -12,11 +12,11 @@ public class ProcessorDebuger {
                 "-d",
                 "target/test-classes",
                 "-processor",
-                "com.xiyuan.rawString.EnableRawStringProcessor",
-                "src/test/java/com/xiyuan/rawString/RawStringTest0.java",
-                "src/test/java/com/xiyuan/rawString/RawStringTest1.java",
-                "src/test/java/com/xiyuan/rawString/RawStringTest2.java",
-                "src/test/java/com/xiyuan/rawString/RawStringTest3.java"
+                "com.xiyuan.templateString.EnableTemplateStringProcessor",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest0.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest1.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest2.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest3.java"
         });
     }
 

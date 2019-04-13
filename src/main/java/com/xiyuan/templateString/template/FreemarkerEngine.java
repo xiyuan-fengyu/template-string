@@ -1,5 +1,6 @@
-package com.xiyuan.rawString.template;
+package com.xiyuan.templateString.template;
 
+import com.xiyuan.templateString.TemplateString;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -31,7 +32,7 @@ public class FreemarkerEngine extends TemplateEngine {
 
         // 模板都是以UTF-8保存的
         configuration.setDefaultEncoding("UTF-8");
-        configuration.setClassLoaderForTemplateLoading(FreemarkerEngine.class.getClassLoader(), "raw-string");
+        configuration.setClassLoaderForTemplateLoading(FreemarkerEngine.class.getClassLoader(), TemplateString.resourcePath);
     }
 
     @Override

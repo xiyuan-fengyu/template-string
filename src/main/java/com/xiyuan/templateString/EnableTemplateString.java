@@ -1,4 +1,4 @@
-package com.xiyuan.rawString;
+package com.xiyuan.templateString;
 
 import java.lang.annotation.*;
 
@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.TYPE})
-public @interface EnableRawString {
+public @interface EnableTemplateString {
 
     String charset() default "UTF-8";
 

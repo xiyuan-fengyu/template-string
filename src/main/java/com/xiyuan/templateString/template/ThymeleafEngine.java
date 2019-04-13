@@ -1,5 +1,6 @@
-package com.xiyuan.rawString.template;
+package com.xiyuan.templateString.template;
 
+import com.xiyuan.templateString.TemplateString;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -19,7 +20,7 @@ public class ThymeleafEngine extends TemplateEngine {
 
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setCacheable(true);
-        templateResolver.setPrefix("raw-string/");
+        templateResolver.setPrefix(TemplateString.resourcePath + "/");
         templateResolver.setCharacterEncoding("UTF-8");
 
         templateEngine = new org.thymeleaf.TemplateEngine();
