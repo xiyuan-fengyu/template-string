@@ -114,12 +114,20 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                                 rawLinesKey = null;
                             }
 
-                            if (trimLine.endsWith("$(/*")) {
-                                // 多行template string开始标记
-                                isStartEndLine = true;
 
-                                rawLines.clear();
-                                rawLinesKey = classOwnerName + "_" + lineI;
+                            if (trimLine.endsWith("(/*")) {
+                                int trimLineLen = trimLine.length();
+                                if (trimLineLen > 3) {
+                                    char c = trimLine.charAt(trimLineLen - 4);
+                                    if (c == '$' || c == 'r') {
+                                        // $()会使用模板语言解析；r()不会使用模板语言解析，直接返回原字符串
+                                        // 多行template string开始标记
+                                        isStartEndLine = true;
+
+                                        rawLines.clear();
+                                        rawLinesKey = classOwnerName + "_" + lineI;
+                                    }
+                                }
                             }
 
                             if (!isStartEndLine) {

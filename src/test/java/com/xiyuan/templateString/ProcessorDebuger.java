@@ -13,10 +13,10 @@ public class ProcessorDebuger {
                 "target/test-classes",
                 "-processor",
                 "com.xiyuan.templateString.EnableTemplateStringProcessor",
-//                "src/test/java/com/xiyuan/templateString/TemplateStringTest0.java",
-//                "src/test/java/com/xiyuan/templateString/TemplateStringTest1.java",
-//                "src/test/java/com/xiyuan/templateString/TemplateStringTest2.java",
-//                "src/test/java/com/xiyuan/templateString/TemplateStringTest3.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest0.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest1.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest2.java",
+                "src/test/java/com/xiyuan/templateString/TemplateStringTest3.java",
                 "src/test/java/com/xiyuan/templateString/TemplateStringTest4.java",
         });
     }

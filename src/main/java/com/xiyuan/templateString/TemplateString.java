@@ -1,5 +1,6 @@
 package com.xiyuan.templateString;
 
+import com.xiyuan.templateString.template.RawEngine;
 import com.xiyuan.templateString.template.TemplateEngine;
 
 import java.util.HashMap;
@@ -51,6 +52,10 @@ public class TemplateString {
 
         public static String $() {
             return TemplateString.$(null, null, new Throwable().getStackTrace()[1]);
+        }
+
+        public static String r() {
+            return TemplateString.$(RawEngine.getInstance(), null, new Throwable().getStackTrace()[1]);
         }
 
     }
