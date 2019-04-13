@@ -8,6 +8,7 @@ import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
@@ -29,13 +30,13 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
 
     private Messager messager;
 
-    private Filer mFiler;
+    private Filer filer;
 
     @Override
     public void init(final ProcessingEnvironment procEnv) {
         super.init(procEnv);
         messager = procEnv.getMessager();
-        mFiler = procEnv.getFiler();
+        filer = procEnv.getFiler();
     }
 
     @Override
@@ -85,7 +86,7 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                             boolean isStartEndLine = false;
 
                             if (trimLine.startsWith("*/)")) {
-                                // 多行raw string结束标记
+                                // 多行template string结束标记
                                 isStartEndLine = true;
 
                                 String prefix = blankPrefix(line);
@@ -93,13 +94,15 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                                 for (String rawLine : rawLines) {
                                     if (!rawLine.trim().isEmpty() && !prefixEquals(rawLine, prefix)) {
                                         samePrefix = false;
+                                        messager.printMessage(Diagnostic.Kind.WARNING, "Multi lines don't share a same blank prefix with the end flag line, " +
+                                                "so the prefix of each lines will keep as it is.");
                                         break;
                                     }
                                 }
 
                                 if (samePrefix) {
                                     List<String> newRawLines = rawLines.stream()
-                                            .map(item -> item.isEmpty() ? item : item.substring(Math.min(prefix.length(), item.length())))
+                                            .map(item -> item.length() < prefix.length() ? "" : item.substring(prefix.length()))
                                             .collect(Collectors.toList());
                                     generateRawLinesResource(rawLinesKey, newRawLines);
                                 }
@@ -112,7 +115,7 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                             }
 
                             if (trimLine.endsWith("$(/*")) {
-                                // 多行raw string开始标记
+                                // 多行template string开始标记
                                 isStartEndLine = true;
 
                                 rawLines.clear();
