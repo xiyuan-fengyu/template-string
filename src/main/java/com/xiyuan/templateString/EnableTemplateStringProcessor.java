@@ -115,7 +115,7 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                             }
 
 
-                            if (trimLine.endsWith("(/*")) {
+                            if (trimLine.endsWith("(/*") && !trimLine.startsWith("//")) {
                                 int trimLineLen = trimLine.length();
                                 if (trimLineLen > 3) {
                                     char c = trimLine.charAt(trimLineLen - 4);

@@ -27,6 +27,10 @@ public class VelocityEngine extends TemplateEngine {
             properties = tryLoadProperties("velocity");
         }
 
+        if (!properties.containsKey("runtime.log.logsystem.class")) {
+            properties.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+        }
+
         properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         properties.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         properties.setProperty(RuntimeConstants.INPUT_ENCODING, "UTF-8");

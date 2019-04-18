@@ -3,14 +3,43 @@ package com.xiyuan.templateString.template;
 import com.xiyuan.templateString.TemplateString;
 
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 /**
  * Created by xiyuan_fengyu on 2019/4/11 13:39.
  */
+@SuppressWarnings("unchecked")
 public abstract class TemplateEngine {
+
+    static {
+        if (tryClassForName("org.slf4j.LoggerFactory") != null) {
+            /*
+            屏蔽以下警告
+             */
+            List<String> hideMsgs = Arrays.asList(
+                    "SLF4J: Failed to load class \"org.slf4j.impl.StaticLoggerBinder\".",
+                    "SLF4J: Defaulting to no-operation (NOP) logger implementation",
+                    "SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details."
+            );
+            PrintStream oldErr = System.err;
+            PrintStream newErr = new PrintStream(oldErr) {
+                @Override
+                public void println(String msg) {
+                    if (!hideMsgs.contains(msg)) {
+                        oldErr.println(msg);
+                    }
+                }
+            };
+            System.setErr(newErr);
+            org.slf4j.LoggerFactory.getLogger("root");
+            System.setErr(oldErr);
+        }
+    }
 
     public TemplateEngine(Properties properties) {
     }

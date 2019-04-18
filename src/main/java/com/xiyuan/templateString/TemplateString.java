@@ -80,7 +80,7 @@ public class TemplateString {
         try {
             return templateEngine.parse(key, context);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("parse template string with error", e);
         }
     }
 

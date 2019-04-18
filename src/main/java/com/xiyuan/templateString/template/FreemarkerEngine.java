@@ -19,6 +19,11 @@ public class FreemarkerEngine extends TemplateEngine {
     public FreemarkerEngine(Properties properties) {
         super(properties);
 
+        if (System.getProperty("org.freemarker.loggerLibrary") == null) {
+            // 屏蔽freemarker的异常日志，异常日志由 TemplateString 打印
+            System.setProperty("org.freemarker.loggerLibrary", "none");
+        }
+
         if (properties == null) {
             properties = tryLoadProperties("freemarker");
         }
