@@ -47,11 +47,13 @@ public class RawEngine extends TemplateEngine {
                         return new String(out.toByteArray(), 0, out.size());
                     }
                 }
+                else {
+                    throw new RuntimeException("template resource not found: " + templateName);
+                }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
-            return null;
         });
     }
 
