@@ -40,6 +40,11 @@ public class VelocityEngine extends TemplateEngine {
     }
 
     @Override
+    public String name() {
+        return "velocity";
+    }
+
+    @Override
     public String parse(String templateName, Map<String, Object> context) throws Exception {
         Template template = templateCache.computeIfAbsent(templateName,
                 key -> velocityEngine.getTemplate(TemplateString.resourcePath + "/" + key));

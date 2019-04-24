@@ -34,6 +34,11 @@ public class RawEngine extends TemplateEngine {
     }
 
     @Override
+    public String name() {
+        return "raw";
+    }
+
+    @Override
     public String parse(String templateName, Map<String, Object> context) throws Exception {
         return templateCache.computeIfAbsent(templateName, key -> {
             try (InputStream in = RawEngine.class.getClassLoader().getResourceAsStream(TemplateString.resourcePath + "/" + key)) {

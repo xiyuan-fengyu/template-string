@@ -28,7 +28,7 @@ public class FreemarkerEngine extends TemplateEngine {
             properties = tryLoadProperties("freemarker");
         }
 
-        configuration = new Configuration(Configuration.VERSION_2_3_28);
+        configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         try {
             configuration.setSettings(properties);
         } catch (TemplateException e) {
@@ -38,6 +38,11 @@ public class FreemarkerEngine extends TemplateEngine {
         // 模板都是以UTF-8保存的
         configuration.setDefaultEncoding("UTF-8");
         configuration.setClassLoaderForTemplateLoading(FreemarkerEngine.class.getClassLoader(), TemplateString.resourcePath);
+    }
+
+    @Override
+    public String name() {
+        return "freemarker";
     }
 
     @Override

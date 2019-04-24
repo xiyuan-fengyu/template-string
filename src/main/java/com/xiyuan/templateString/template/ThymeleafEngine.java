@@ -28,6 +28,11 @@ public class ThymeleafEngine extends TemplateEngine {
     }
 
     @Override
+    public String name() {
+        return "thymeleaf";
+    }
+
+    @Override
     public String parse(String templateName, Map<String, Object> context) throws Exception {
         Context tempContext = new Context();
         tempContext.setVariables(context);

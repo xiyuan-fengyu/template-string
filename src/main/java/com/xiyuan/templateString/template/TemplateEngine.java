@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Created by xiyuan_fengyu on 2019/4/11 13:39.
@@ -43,6 +44,8 @@ public abstract class TemplateEngine {
 
     public TemplateEngine(Properties properties) {
     }
+
+    public abstract String name();
 
     public abstract String parse(String templateName, Map<String, Object> context) throws Exception;
 
