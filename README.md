@@ -8,7 +8,7 @@
     <dependency>
         <groupId>com.github.xiyuan-fengyu</groupId>
         <artifactId>template-string</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.3</version>
     </dependency>
 
     <dependency>

@@ -4,6 +4,7 @@ package com.xiyuan.templateString;
 /**
  * Created by xiyuan_fengyu on 2019/4/9 16:06.
  */
+@SuppressWarnings("uncheck")
 @EnableTemplateString(charset = "utf-8")
 public class TemplateStringTest0 {
 

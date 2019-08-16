@@ -51,7 +51,9 @@ public final class EnableTemplateStringProcessor extends AbstractProcessor {
                 if (ele instanceof Symbol.ClassSymbol) {
                     Symbol.ClassSymbol classSymbol = (Symbol.ClassSymbol) ele;
 
-                    Pair<Symbol.MethodSymbol, Attribute> attributePair = classSymbol.getMetadata().getDeclarationAttributes().get(0).values.head;
+                    Pair<Symbol.MethodSymbol, Attribute> attributePair = classSymbol.getMetadata().getDeclarationAttributes()
+                            .stream().filter(item -> item.getAnnotationType().toString().equals(EnableTemplateString.class.getName()))
+                            .findFirst().get().values.head;
                     String charset = attributePair == null ? "UTF-8" : (String) attributePair.snd.getValue();
 
                     JavaFileObject sourcefile = classSymbol.sourcefile;
